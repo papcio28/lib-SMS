@@ -8,30 +8,33 @@ import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 
+import java.util.Objects;
+
 public abstract class IncomingSmsBroadcastReceiver extends BroadcastReceiver {
-    private static final String _SMS_PDUS = "pdus";
-    private static final String _SMS_FORMAT = "format";
+    private static final String SMS_PDUS = "pdus";
+    private static final String SMS_FORMAT = "format";
 
     protected abstract void onCreate();
 
-    protected abstract void handleSMS(final SmsMessage message);
+    protected abstract void handleSMS(final SMSMessage message);
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
-    public final void onReceive(Context context, Intent intent) {
+    public final void onReceive(final Context context, final Intent intent) {
         onCreate();
 
-        Bundle params = intent.getExtras();
+        final Bundle params = intent.getExtras();
 
-        if (params != null && params.containsKey(_SMS_PDUS)) {
-            Object[] pdus = (Object[]) params.get(_SMS_PDUS);
+        if (params != null && params.containsKey(SMS_PDUS)) {
+            Object[] pdus = (Object[]) params.get(SMS_PDUS);
 
-            assert pdus != null;
+            Objects.requireNonNull(pdus);
             for (Object pdu : pdus) {
                 SmsMessage smsMessage = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ?
-                        SmsMessage.createFromPdu((byte[]) pdu, params.getString(_SMS_FORMAT)) : SmsMessage.createFromPdu((byte[]) pdu);
+                        SmsMessage.createFromPdu((byte[]) pdu, params.getString(SMS_FORMAT)) :
+                        SmsMessage.createFromPdu((byte[]) pdu);
 
-                handleSMS(smsMessage);
+                handleSMS(new SMSMessage(smsMessage));
             }
         }
     }
