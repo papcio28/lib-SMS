@@ -14,14 +14,14 @@ public abstract class IncomingSmsBroadcastReceiver extends BroadcastReceiver {
     private static final String SMS_PDUS = "pdus";
     private static final String SMS_FORMAT = "format";
 
-    protected abstract void onCreate();
+    protected abstract void onCreate(final Context context);
 
-    protected abstract void handleSMS(final SMSMessage message);
+    protected abstract void handleSMS(final Context context, final SMSMessage message);
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public final void onReceive(final Context context, final Intent intent) {
-        onCreate();
+        onCreate(context);
 
         final Bundle params = intent.getExtras();
 
@@ -34,7 +34,7 @@ public abstract class IncomingSmsBroadcastReceiver extends BroadcastReceiver {
                         SmsMessage.createFromPdu((byte[]) pdu, params.getString(SMS_FORMAT)) :
                         SmsMessage.createFromPdu((byte[]) pdu);
 
-                handleSMS(new SMSMessage(smsMessage));
+                handleSMS(context, new SMSMessage(smsMessage));
             }
         }
     }
