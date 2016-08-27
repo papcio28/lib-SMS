@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.telephony.SmsManager;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,8 +44,13 @@ public class SmsProvider {
 
     public int deleteAllSms() {
         int count = 0;
-        for (SMSMessage message : getSmsList()) {
-            count += mContentResolver.delete(Uri.parse("content://sms/" + message.getId()), null, null);
+        try (Cursor c = mContentResolver.query(Uri.parse("content://sms/"), null, null, null, null)) {
+            while (c.moveToNext()) {
+                int id = c.getInt(0);
+                count += mContentResolver.delete(Uri.parse("content://sms/" + id), null, null);
+            }
+        } catch (Exception e) {
+            Log.e(this.toString(), "Error deleting sms", e);
         }
         return count;
     }
