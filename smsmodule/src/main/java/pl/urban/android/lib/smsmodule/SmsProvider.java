@@ -2,6 +2,7 @@ package pl.urban.android.lib.smsmodule;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.net.Uri;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.telephony.SmsManager;
@@ -41,7 +42,7 @@ public class SmsProvider {
     }
 
     public int deleteAllSms() {
-        return mContentResolver.delete(Telephony.Sms.CONTENT_URI, null, null);
+        return mContentResolver.delete(Uri.parse("content://sms"), "1 = 1", null);
     }
 
     private SMSMessage mapSmsMessageFromCursor(final Cursor cursor) {
