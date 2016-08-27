@@ -42,12 +42,20 @@ public class SmsProvider {
     }
 
     public int deleteAllSms() {
-        return mContentResolver.delete(Uri.parse("content://sms"), "1 = 1", null);
+        int count = 0;
+        for (SMSMessage message : getSmsList()) {
+            count += mContentResolver.delete(Uri.parse("content://sms/" + message.getId()), null, null);
+        }
+        return count;
     }
 
     private SMSMessage mapSmsMessageFromCursor(final Cursor cursor) {
         final SMSMessage msg = new SMSMessage();
 
+        int smsIdIndex = cursor.getColumnIndex(Telephony.Sms._ID);
+        if (smsIdIndex > -1) {
+            msg.setId(cursor.getInt(smsIdIndex));
+        }
         msg.setNumber(cursor.getString(cursor.getColumnIndex(Telephony.TextBasedSmsColumns.ADDRESS)));
         msg.setBody(cursor.getString(cursor.getColumnIndex(Telephony.TextBasedSmsColumns.BODY)));
         msg.setDate(cursor.getLong(cursor.getColumnIndex(Telephony.TextBasedSmsColumns.DATE)));

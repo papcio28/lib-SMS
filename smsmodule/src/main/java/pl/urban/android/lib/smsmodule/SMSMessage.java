@@ -43,6 +43,7 @@ public class SMSMessage {
         }
     }
 
+    private Integer mId;
     private String mBody;
     private String mNumber;
     private String mDate;
@@ -60,6 +61,14 @@ public class SMSMessage {
 
     public SMSMessage(final SmsMessage smsMessage) {
         this(smsMessage.getMessageBody(), smsMessage.getOriginatingAddress());
+    }
+
+    public Integer getId() {
+        return mId;
+    }
+
+    public void setId(Integer id) {
+        mId = id;
     }
 
     public String getBody() {
