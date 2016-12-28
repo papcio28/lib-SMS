@@ -8,8 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 
-import java.util.Objects;
-
 public abstract class IncomingSmsBroadcastReceiver extends BroadcastReceiver {
     private static final String SMS_PDUS = "pdus";
     private static final String SMS_FORMAT = "format";
@@ -28,7 +26,9 @@ public abstract class IncomingSmsBroadcastReceiver extends BroadcastReceiver {
         if (params != null && params.containsKey(SMS_PDUS)) {
             Object[] pdus = (Object[]) params.get(SMS_PDUS);
 
-            Objects.requireNonNull(pdus);
+            if (pdus == null) {
+                return;
+            }
             for (Object pdu : pdus) {
                 SmsMessage smsMessage = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ?
                         SmsMessage.createFromPdu((byte[]) pdu, params.getString(SMS_FORMAT)) :
